@@ -1,8 +1,13 @@
+#importing python libraries 
+
 import streamlit as st
 import pickle
 import numpy as np
-
 import pandas as pd
+
+
+#importing pickle files 
+
 NMF_applied=pickle.load(open('model_final_NMF.pkl','rb'))
 SVD_applied=pickle.load(open('model_final_SVD.pkl','rb'))
 SVDpp_applied=pickle.load(open('model_final_SVDpp.pkl','rb'))
@@ -10,6 +15,10 @@ KNNWithZScore_applied=pickle.load(open('model_final_KNN.pkl','rb'))
 CoClustering_applied=pickle.load(open('model_final_CoC.pkl','rb'))
 cv=pickle.load(open('model_final_cv.pkl','rb'))
 csv=pickle.load(open('model_final_csv.pkl','rb'))
+movies_list=pickle.load(open('model_final.pkl','rb'))
+
+
+#function used to recommend movies related to particular movie
 def recommend(movie,dataSet):
      l=[]
      for i in range(len(dataSet)):
@@ -28,7 +37,8 @@ def recommend(movie,dataSet):
                            continue
                         l.append(dataSet['iid'][j])
                     return l
-movies_list=pickle.load(open('model_final.pkl','rb'))
+#this function is used to display the values outputted by the recommend function
+               
 list_of_algo=['NMF','SVD','SVDpp','KNN','Co-Clustering']
 def display_algo(name):
     if name=='NMF':
@@ -52,7 +62,12 @@ def display_algo(name):
         recommendations =recommend(selected_movie,CoClustering_applied)
         for i in recommendations:
          st.write(i)
-         
+  
+
+
+
+#displays bar charts 
+
 def display_page(name):
         chart_data=[]
         cvf= cv['test_rmse'][i]
@@ -72,7 +87,11 @@ def display_page(name):
         st.bar_chart(chart_data)
         
         st.write('The graph above represents the MAE values for the '+ list_of_algo[i]+' algorithm vs Folds ')
-       
+    
+
+
+# display comaprision between algorithms 
+
 def compare():
         chart_data=[]
         cvf= cv['RMSE']
@@ -94,7 +113,7 @@ def compare():
         
         
         
-        
+#sidebar - displays option on the sides  
 if st.sidebar.button('Home'):
      st.markdown("<h1 style='text-align: center; color: white;'>Recommendation System Analyser</h1>", unsafe_allow_html=True)
      st.markdown("<h4 style='text-align: center; color: grey;'>An app that compares different kinds of algorithms that a web-streaming app (like Netflix) may use for their Recommendation Engine.</h2>", unsafe_allow_html=True) 
@@ -105,8 +124,7 @@ else:
     sidebar_select=st.sidebar.selectbox('Select algorithm',list_of_algo)
     if st.sidebar.button('Compare'):
       st.title('Recommendation System Analyser')
-      compare()
-      
+      compare()     
     else:
      st.title('Recommendation System Analyser')
      display_algo(sidebar_select)
